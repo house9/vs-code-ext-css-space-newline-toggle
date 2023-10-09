@@ -1,10 +1,10 @@
 {
   "name": "css-space-newline-toggle",
   "displayName": "css-space-newline-toggle",
-  "description": "",
+  "description": "Toggle between space and newline in CSS class/className attributes, useful when working with TailwindCSS",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.82.0"
+    "vscode": "^1.83.0"
   },
   "categories": [
     "Other"
