@@ -15,24 +15,24 @@ export function activate(context: vscode.ExtensionContext) {
 
       const text = document.getText();
 
-      // Use regex to capture the content of className attribute
-      const regex = /className\s*=\s*"([^"]*)"/g;
+      // Use regex to capture the content of class or className attributes, considering both double and single quotes
+      const regex = /(class|className)\s*=\s*("|')([^"']*)\2/g;
       let match;
 
       while ((match = regex.exec(text))) {
-        const start = match.index + match[0].indexOf(match[1]); // start of attribute value
-        const end = start + match[1].length; // end of attribute value
+        const start = match.index + match[0].indexOf(match[3]); // start of attribute value
+        const end = start + match[3].length; // end of attribute value
 
         // Convert to Position for comparison
         const startPosition = document.positionAt(start);
         const endPosition = document.positionAt(end);
 
-        // Check if cursor is within this className value
+        // Check if cursor is within this class or className value
         if (
           currentPosition.isAfterOrEqual(startPosition) &&
           currentPosition.isBeforeOrEqual(endPosition)
         ) {
-          let attributeValue = match[1];
+          let attributeValue = match[3];
 
           // Determine if we are expanding or collapsing
           if (attributeValue.includes(" ")) {
