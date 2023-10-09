@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 export function activate(context: vscode.ExtensionContext) {
   let disposable = vscode.commands.registerCommand(
-    "extension.toggleSpacing",
+    "css-space-newline-toggle.toogle",
     () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor) {

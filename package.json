@@ -1,6 +1,6 @@
 {
-  "name": "css-newline-edit",
-  "displayName": "css-newline-edit",
+  "name": "css-space-newline-toggle",
+  "displayName": "css-space-newline-toggle",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -14,15 +14,15 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.toggleSpacing",
-        "title": "Learn to foobar"
+        "command": "css-space-newline-toggle.toogle",
+        "title": "CSS Space Newline Toggle"
       }
     ],
     "keybindings": [
       {
-        "command": "extension.toggleSpacing",
-        "key": "ctrl+k ctrl+k",
-        "mac": "cmd+k cmd+k",
+        "command": "css-space-newline-toggle.toogle",
+        "key": "ctrl+shift+alt+p",
+        "mac": "ctrl+shift+alt+p",
         "when": "editorTextFocus"
       }
     ]
