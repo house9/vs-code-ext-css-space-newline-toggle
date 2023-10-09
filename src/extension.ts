@@ -1,70 +1,62 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-  // Use the console to output diagnostic information (console.log) and errors (console.error)
-  // This line of code will only be executed once when your extension is activated
-  console.log(
-    'Congratulations, your extension "css-newline-edit" is now active!'
-  );
+  let disposable = vscode.commands.registerCommand(
+    "extension.toggleSpacing",
+    () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor) {
+        console.log("No active text editor.");
+        return; // No open text editor
+      }
 
-  // The command has been defined in the package.json file
-  // Now provide the implementation of the command with registerCommand
-  // The commandId parameter must match the command field in package.json
-  // let disposable = vscode.commands.registerCommand('css-newline-edit.helloWorld', () => {
-  // 	// The code you place here will be executed every time your command is executed
-  // 	// Display a message box to the user
-  // 	vscode.window.showInformationMessage('Hello World from css-newline-edit!');
-  // });
+      const document = editor.document;
+      const currentPosition = editor.selection.active;
 
-  let disposable = vscode.commands.registerTextEditorCommand(
-    "css-newline-edit.learning",
-    function (editor, edit) {
-      // get cursor location
-      const selection = editor.selection;
-      // get the text of the line
-      const lineText = editor.document.lineAt(selection.start.line).text;
-      console.log("lineText:", lineText);
-      // look for className on that line
-      const regex = /className=".*"/i;
-      const hasClassName = regex.test(lineText);
+      const text = document.getText();
 
-      if (hasClassName) {
-        console.log("hasClassName:", hasClassName);
-        const matches = regex.exec(lineText);
-        console.log("matches:", matches?.length);
-        console.log("matches[0]", matches && matches[0]);
+      // Use regex to capture the content of className attribute
+      const regex = /className\s*=\s*"([^"]*)"/g;
+      let match;
 
-        const classNameFull = (matches && matches[0]) || "";
-        console.log("classNameFull:", classNameFull);
+      while ((match = regex.exec(text))) {
+        const start = match.index + match[0].indexOf(match[1]); // start of attribute value
+        const end = start + match[1].length; // end of attribute value
 
-        const classNameValue = classNameFull
-          .replace(/"/g, "")
-          .replace("=", "")
-          .replace("className", "");
-        console.log("classNameValue:", classNameValue);
+        // Convert to Position for comparison
+        const startPosition = document.positionAt(start);
+        const endPosition = document.positionAt(end);
 
-        const newClassNameValue = `\n${classNameValue.replace(/ /g, "\n")}\n`;
-        console.log("newClassNameValue:", newClassNameValue);
+        // Check if cursor is within this className value
+        if (
+          currentPosition.isAfterOrEqual(startPosition) &&
+          currentPosition.isBeforeOrEqual(endPosition)
+        ) {
+          let attributeValue = match[1];
 
-        const newContent = lineText.replace(classNameValue, newClassNameValue);
-        console.log("newContent:", newContent);
+          // Determine if we are expanding or collapsing
+          if (attributeValue.includes(" ")) {
+            // Expand
+            attributeValue =
+              "\n" + attributeValue.split(" ").join("\n").trim() + "\n";
+          } else {
+            // Collapse
+            attributeValue = attributeValue
+              .split("\n")
+              .map((s) => s.trim())
+              .join(" ")
+              .trim();
+          }
 
-        // get range for current line
-        const currentLineRange = editor.document.lineAt(
-          selection.active.line
-        ).range;
-        // replace text in editor
-        edit.replace(currentLineRange, newContent);
-      } else {
-        // TODO: scan above lines for className=" (followed by nothing)
-        // scan below lines for double quote
-        // take selection and put back on 1 line
+          editor.edit((editBuilder) => {
+            editBuilder.replace(
+              new vscode.Range(startPosition, endPosition),
+              attributeValue
+            );
+          });
 
-        console.log("nothing to do ...");
+          break; // Exit loop once found and processed
+        }
       }
     }
   );
@@ -72,5 +64,4 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(disposable);
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {}

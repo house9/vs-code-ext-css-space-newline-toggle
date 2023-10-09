@@ -14,13 +14,13 @@
   "contributes": {
     "commands": [
       {
-        "command": "css-newline-edit.learning",
+        "command": "extension.toggleSpacing",
         "title": "Learn to foobar"
       }
     ],
     "keybindings": [
       {
-        "command": "css-newline-edit.learning",
+        "command": "extension.toggleSpacing",
         "key": "ctrl+k ctrl+k",
         "mac": "cmd+k cmd+k",
         "when": "editorTextFocus"
